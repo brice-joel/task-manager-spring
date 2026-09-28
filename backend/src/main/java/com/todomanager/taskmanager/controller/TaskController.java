@@ -1,23 +1,23 @@
 package com.todomanager.taskmanager.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.todomanager.taskmanager.services.TaskService;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import com.todomanager.taskmanager.dto.TaskResponse;
+
 import com.todomanager.taskmanager.dto.TaskRequest;
+import com.todomanager.taskmanager.dto.TaskResponse;
+import com.todomanager.taskmanager.services.TaskService;
+
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.http.HttpStatus;
-import java.util.Objects;
-
-
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -31,7 +31,6 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TaskResponse>> getTasks() {
-        System.out.println("TaskController " + taskService.getAllTasks());
         return ResponseEntity.ok(taskService.getAllTasks());
     }
 
@@ -53,10 +52,10 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id){
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();
-         //HTTP 204 NO CONTENT (Bonne pratique REST)
+        //HTTP 204 NO CONTENT (Bonne pratique REST)
     }
 
 }
