@@ -1,0 +1,13 @@
+flowchart TD
+    subgraph BACKEND ["1. Tests Backend (Spring Boot)"]
+        B1["1.1 Test Unitaire : TaskServiceTest (JUnit 5 + Mockito)"]
+        B2["1.2 Test d'Intégration : TaskControllerIT (MockMvc + PostgreSQL)"]
+    end
+    
+    subgraph FRONTEND ["2. Tests Frontend (React)"]
+        F1["2.1 Configuration de l'environnement de test (Vitest)"]
+        F2["2.2 Test Unitaire : Badge.test.tsx (Composant isolé)"]
+        F3["2.3 Test d'Intégration : TasksPage.test.tsx (Page complète)"]
+    end
+
+    BACKEND --> FRONTEND
