@@ -11,6 +11,11 @@ RUN npm ci
 
 # 2. On copie le code source et on compile la version de production (dist)
 COPY . .
+
+# Argument pour injecter l'URL du backend au moment du build (sur Render ou en local)
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 RUN npm run build
 
 # ==========================================

@@ -2,27 +2,27 @@ version: "3.8"
 
 services:
   # ==========================================
-  # SERVICE 1 : Base de données MySQL
+  # SERVICE 1 : Base de données PostgreSQL
   # ==========================================
-  mysql:
-    image: mysql:8.0
-    container_name: taskmanager-mysql
+  postgres:
+    image: postgres:16-alpine
+    container_name: taskmanager-postgres
     restart: always
     environment:
-      MYSQL_DATABASE: todo
-      MYSQL_ROOT_PASSWORD: root
+      POSTGRES_DB: todo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      # Optionnel : permet d'ouvrir ta base depuis MySQL Workbench ou DBeaver sur ton PC
-      - "3307:3306"
+      # Permet d'ouvrir la base depuis DBeaver, pgAdmin ou ton IDE sur ton PC
+      - "5432:5432"
     volumes:
       # Persistance des données sur ta machine hôte
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test:
-        ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d todo"]
       interval: 5s
       timeout: 5s
-      retries: 10
+      retries: 5
 
   # ==========================================
   # SERVICE 2 : Backend Spring Boot
@@ -36,13 +36,13 @@ services:
     ports:
       - "8080:8080"
     environment:
-      # On pointe vers le conteneur 'mysql' sur son port interne 3306
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/todo?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
+      # On pointe vers le conteneur 'postgres' sur son port interne 5432
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/todo
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
 
   # ==========================================
@@ -52,6 +52,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:8080/api
     container_name: taskmanager-frontend
     restart: always
     ports:
@@ -64,4 +66,4 @@ services:
 # VOLUMES DOCKER PERSISTANTS
 # ==========================================
 volumes:
-  mysql_data:
+  postgres_data:
